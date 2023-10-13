@@ -1,36 +1,53 @@
-PREFIX  := /usr/local
-CC      := cc
-CFLAGS  := -pedantic -Wall -Wno-deprecated-declarations -Os
-LDFLAGS := -lX11
+.POSIX:
 
-# FreeBSD (uncomment)
-#LDFLAGS += -L/usr/local/lib -I/usr/local/include
-# # OpenBSD (uncomment)
-#LDFLAGS += -L/usr/X11R6/lib -I/usr/X11R6/include
+BIN := dwmblocks
+BUILD_DIR := build
+SRC_DIR := src
+INC_DIR := inc
 
-all: options dwmblocks
+VERBOSE := 0
 
-options:
-	@echo dwmblocks build options:
-	@echo "CFLAGS  = ${CFLAGS}"
-	@echo "LDFLAGS = ${LDFLAGS}"
-	@echo "CC      = ${CC}"
+PREFIX := /usr/local
+CFLAGS := -Wall -Wextra -Ofast -I. -I$(INC_DIR)
+CFLAGS += -Wall -Wextra -Wno-missing-field-initializers
+LDLIBS := -lX11
 
-dwmblocks: dwmblocks.c blocks.def.h blocks.h
-	${CC} -o dwmblocks dwmblocks.c ${CFLAGS} ${LDFLAGS}
+VPATH := $(SRC_DIR)
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(wildcard $(SRC_DIR)/*.c))
+OBJS += $(patsubst %.c,$(BUILD_DIR)/%.o,$(wildcard *.c))
 
-blocks.h:
-	cp blocks.def.h $@
+INSTALL_DIR := $(DESTDIR)$(PREFIX)/bin
+
+# Prettify output
+PRINTF := @printf "%-8s %s\n"
+ifeq ($(VERBOSE), 0)
+	Q := @
+endif
+
+all: $(BUILD_DIR)/$(BIN)
+
+$(BUILD_DIR)/$(BIN): $(OBJS)
+	$(PRINTF) "LD" $@
+	$Q$(LINK.o) $^ $(LDLIBS) -o $@
+
+$(BUILD_DIR)/%.o: %.c config.h | $(BUILD_DIR)
+	$(PRINTF) "CC" $@
+	$Q$(COMPILE.c) -o $@ $<
+
+$(BUILD_DIR):
+	$(PRINTF) "MKDIR" $@
+	$Qmkdir -p $@
 
 clean:
-	rm -f *.o *.gch dwmblocks
+	$(PRINTF) "CLEAN" $(BUILD_DIR)
+	$Q$(RM) $(BUILD_DIR)/*
 
-install: dwmblocks
-	mkdir -p ${DESTDIR}${PREFIX}/bin
-	cp -f dwmblocks ${DESTDIR}${PREFIX}/bin
-	chmod 755 ${DESTDIR}${PREFIX}/bin/dwmblocks
+install: $(BUILD_DIR)/$(BIN)
+	$(PRINTF) "INSTALL" $(INSTALL_DIR)/$(BIN)
+	$Qinstall -D -m 755 $< $(INSTALL_DIR)/$(BIN)
 
 uninstall:
-	rm -f ${DESTDIR}${PREFIX}/bin/dwmblocks
+	$(PRINTF) "RM" $(INSTALL_DIR)/$(BIN)
+	$Q$(RM) $(INSTALL_DIR)/$(BIN)
 
-.PHONY: all options clean install uninstall
+.PHONY: all clean install uninstall
