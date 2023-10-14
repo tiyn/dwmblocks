@@ -5,7 +5,7 @@
 
 Block blocks[] = {
     {"memory",       10,   6},
-    {"cpu",          10,   5},
+    {"cpu intel",          10,   5},
     {"disk /",       1800, 7},
     {"volume",       0,    4},
     {"battery BAT0", 5,    2},
