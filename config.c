@@ -4,12 +4,12 @@
 #include "util.h"
 
 Block blocks[] = {
-    {"memory",        10,   6},
-    {"cpu amd",       10,   5},
+    {"memory",        30,   6},
+    {"cpu amd",       30,   5},
     {"disk /home",    1800, 7},
     {"volume",        120,  4},
-    {"battery BAT0",  5,    2},
-    {"internet",      5,    3},
+    {"battery BAT0",  120,  2},
+    {"internet",      30,   3},
     {"clock",         60,   1},
 };
 
