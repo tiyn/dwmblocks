@@ -6,6 +6,7 @@
 Block blocks[] = {
     {"memory",        30,   6},
     {"cpu",           30,   5},
+    {"gpu",           30,   8},
     {"disk /home",    1800, 7},
     {"volume",        120,  4},
     {"battery BAT0",  120,  2},
