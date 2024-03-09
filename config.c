@@ -4,6 +4,7 @@
 #include "util.h"
 
 Block blocks[] = {
+    {"player",        5,    9},
     {"memory",        30,   6},
     {"cpu",           30,   5},
     {"gpu",           30,   8},
